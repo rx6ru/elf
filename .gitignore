@@ -1,0 +1,20 @@
+/target
+.env
+.env.*
+*.wav
+*.ogg
+
+# local research, design material and working notes
+KB/
+design/
+notes/
+.omx/
+
+# old prototype kept on disk only
+crates/elf-hud-concept/
+
+# editor and OS files
+.idea/
+.vscode/
+*.swp
+.DS_Store

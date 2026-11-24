@@ -1,0 +1,27 @@
+[workspace]
+resolver = "3"
+members = ["crates/elf-hud", "crates/elf"]
+exclude = ["third_party"]
+
+[workspace.package]
+edition = "2024"
+license = "MIT"
+authors = ["Amar Mahato"]
+repository = "https://github.com/rx6ru/elf"
+
+[workspace.dependencies]
+rune = { path = "third_party/rune/crates/rune", default-features = true }
+wgpu = { version = "~30.0.1", default-features = false }
+bytemuck = { version = "1", features = ["derive"] }
+
+# Rune's own patches; a dependency's [patch] does not reach the workspace that uses it.
+[patch.crates-io]
+wgpu-hal = { path = "third_party/rune/vendor/wgpu-hal" }
+winit = { path = "third_party/rune/vendor/winit" }
+sctk-adwaita = { path = "third_party/rune/vendor/sctk-adwaita" }
+parley_engine = { path = "third_party/rune/vendor/parley_engine" }
+accesskit_windows = { path = "third_party/rune/vendor/accesskit_windows" }
+accesskit_macos = { path = "third_party/rune/vendor/accesskit_macos" }
+
+[profile.dev.package."*"]
+opt-level = 2

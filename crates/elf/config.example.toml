@@ -1,0 +1,88 @@
+# ELF config: copy to ~/.config/elf/config.toml. Every key is optional; what is written here
+# is the default.
+
+# --- Deepgram keys --------------------------------------------------------------------------
+# Keys are secrets and do not go in this file. ELF reads them from these places and merges them
+# (trimmed, without empties or repeats, in this order):
+#   1. the environment, then ~/.config/elf/.env, then ./.env, then the repo's .env, each with any
+#      mix of these lines:
+#        DEEPGRAM_API_KEY=k1
+#        DEEPGRAM_API_KEYS=k1,k2,k3        (comma or space separated)
+#        DEEPGRAM_API_KEY_2=k2             (and _3, _4, ... by number)
+#   2. ~/.config/elf/deepgram_keys: one key per line; `#` starts a comment.
+# With several keys, each dictation takes the next key in turn. Its live text, its final pass
+# and its retries all use that one key. If Deepgram turns a key away (401/403 bad key: out for
+# good; 402 no credit: out for 10 minutes; 429 too many requests: out for 60 seconds), the
+# request goes at once to the next key that is not out. Only when every key is out does ELF give
+# up, tell you once, and keep the audio for `elf retry`. `elf status` shows `keys: 3 (1 cooling
+# down)`. Keys are never written to the log; they appear as key#2 (and their last 4 characters).
+# Restarting elfd forgets which keys were out and where the rotation was.
+
+# --- dictation ------------------------------------------------------------------------------
+
+# "en", or "multi" to mix Hindi and English.
+language = "en"
+# true: say "comma" or "new paragraph" and get the symbol. Turns off automatic punctuation.
+spoken_punctuation = false
+# Add one space after each dictation so two dictations do not glue together.
+trailing_space = true
+# Where the text goes: "original" is the window you started in; "focused" is the window that
+# has focus when the text is ready.
+paste_into = "original"
+# A dictation stops by itself after this many seconds.
+max_seconds = 600
+# Start and stop sounds.
+sounds = false
+# Days of dictation history to keep.
+history_days = 30
+# Ask Deepgram not to use your audio to train its models.
+mip_opt_out = true
+
+# Also stream audio to Deepgram while you speak (live text, pass 1). Off: only the whole
+# recording is sent when you stop, which is more accurate and costs half.
+live_stream = false
+
+# --- vocabulary -----------------------------------------------------------------------------
+
+[keyterms]
+# Words Deepgram should spell right everywhere (up to 100 in total).
+always = ["ELF", "Hyprland", "Deepgram"]
+
+[keyterms.apps]
+# Extra words while a window of this class has focus (`hyprctl -j activewindow` shows the class).
+kitty = ["cargo", "systemctl"]
+
+[paste_keys]
+# The keys that paste in a window of this class. The default is "shift+Insert".
+"org.wezfurlong.wezterm" = "ctrl+shift+v"
+
+[snippets]
+# Say the whole phrase and get the text instead. Case and punctuation do not matter.
+"insert my email" = "someone@example.com"
+
+# --- the HUD --------------------------------------------------------------------------------
+# Read again whenever the file changes, so an edit shows on the next dictation, without a
+# restart. A mistake in this file keeps the last good settings and sends a notification that
+# names the line. Values outside their range are pulled into it and noted in elfd.log.
+
+[hud]
+# Ink colour: "auto" looks at the screen just above the HUD and uses near-black on light
+# backgrounds and white on dark ones; or force "white" or "dark".
+color = "auto"
+# Which screen edge the HUD sits on: "bottom" or "top".
+anchor = "bottom"
+# Shift from the centre, as a fraction of the monitor's width (-0.5 to 0.5). 0 is centred.
+# 0.1 is a tenth of the width to the right.
+x_offset = 0.0
+# Distance from the anchor edge, as a fraction of the monitor's height (0 to 0.5). Bars at the
+# edge are cleared first, so this is the gap above them. Left out (the default), it is 0.065,
+# but never less than 24 or more than 160 pixels.
+# y_offset = 0.065
+# Multiplier on the automatic size (0.5 to 2).
+size = 1.0
+# How fast the size grows with the screen (0 to 1). 0.5 grows gently, 1 grows in step with the
+# screen, 0 keeps the size fixed. The automatic size stays between 0.8 and 1.45 times the
+# design size (225 x 120 points).
+scale_exponent = 0.5
+# "focused" (the monitor you work on) or a monitor name such as "eDP-1" (`hyprctl monitors`).
+monitor = "focused"

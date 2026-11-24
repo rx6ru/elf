@@ -1,0 +1,5 @@
+[submodule "third_party/rune"]
+	path = third_party/rune
+	url = https://github.com/anomalyco/rune
+	branch = dev
+	shallow = true
